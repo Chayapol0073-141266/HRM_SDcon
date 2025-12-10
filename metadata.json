@@ -1,0 +1,9 @@
+{
+  "name": "Copy of HRM SDcon",
+  "description": "ระบบ Dashboard HRM ทันสมัยในธีมสีส้มพาสเทล รองรับการลงเวลาผ่านพิกัด GPS, การอนุมัติการลา และรายงานสำหรับผู้บริหาร",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
