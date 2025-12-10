@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { NewsItem } from '../types';
 import { Calendar, User, ChevronDown, ChevronUp } from 'lucide-react';
@@ -11,7 +10,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden hover:shadow-md transition-shadow duration-300">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300">
       {news.imageUrl && (
         <div className="h-48 w-full overflow-hidden">
           <img 
@@ -23,7 +22,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
       )}
       <div className="p-5">
         <div className="flex justify-between items-start mb-2">
-          <div className="flex items-center text-xs text-orange-500 font-medium bg-orange-50 px-2 py-1 rounded-full">
+          <div className="flex items-center text-xs text-orange-600 font-medium bg-gray-100 px-2 py-1 rounded-full">
             <Calendar size={12} className="mr-1" />
             {new Date(news.date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })}
           </div>
@@ -47,7 +46,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
 
         <button 
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center text-sm font-semibold text-orange-500 hover:text-orange-700 transition-colors focus:outline-none"
+          className="flex items-center text-sm font-semibold text-orange-600 hover:text-orange-800 transition-colors focus:outline-none"
         >
           {isExpanded ? (
             <>

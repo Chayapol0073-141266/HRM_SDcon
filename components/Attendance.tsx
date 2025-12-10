@@ -149,15 +149,15 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
   return (
     <div className="space-y-8">
       {/* Attendance Section */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-orange-100">
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
         <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-          <MapPin className="mr-2 text-orange-500" /> 
+          <MapPin className="mr-2 text-orange-600" /> 
           การลงเวลาทำงาน: {new Date().toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Location Info */}
-          <div className="bg-orange-50 p-4 rounded-xl space-y-3">
+          <div className="bg-gray-50 p-4 rounded-xl space-y-3 border border-gray-100">
              <div className="flex justify-between items-start">
                <div>
                  <p className="text-sm text-gray-500">พิกัดปัจจุบัน</p>
@@ -168,7 +168,7 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
                <button 
                 onClick={getCurrentLocation} 
                 disabled={loading}
-                className="p-2 bg-white text-orange-500 rounded-full shadow hover:bg-orange-100 transition"
+                className="p-2 bg-white text-orange-600 rounded-full shadow hover:bg-gray-100 transition"
                >
                  <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
                </button>
@@ -198,7 +198,7 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
                    placeholder="ระบุเหตุผล (เช่น พบลูกค้า, WFH)" 
                    value={reason}
                    onChange={(e) => setReason(e.target.value)}
-                   className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
+                   className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                  />
                  <div className="flex items-center space-x-2">
                    <button 
@@ -228,7 +228,7 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
                   className={`py-3 rounded-xl font-bold shadow-sm transition-all ${
                     todayRecord?.checkInTime 
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                    : 'bg-gradient-to-r from-orange-400 to-orange-500 text-white hover:shadow-md hover:from-orange-500 hover:to-orange-600'
+                    : 'bg-orange-600 text-white hover:bg-orange-700 shadow-md'
                   }`}
                 >
                   {isExec ? 'บันทึกงาน' : 'เช็คอิน'}
@@ -240,7 +240,7 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
                   className={`py-3 rounded-xl font-bold shadow-sm transition-all ${
                     !todayRecord?.checkInTime || todayRecord?.checkOutTime
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                    : 'bg-white border-2 border-orange-500 text-orange-600 hover:bg-orange-50'
+                    : 'bg-white border-2 border-orange-600 text-orange-600 hover:bg-orange-50'
                   }`}
                 >
                    {isExec ? 'จบงาน' : 'เช็คเอาท์'}
@@ -248,7 +248,7 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
              </div>
 
              {todayRecord && (
-               <div className="text-center text-sm text-gray-600 bg-orange-50/50 p-2 rounded-lg">
+               <div className="text-center text-sm text-gray-600 bg-gray-50 p-2 rounded-lg border border-gray-100">
                  {todayRecord.checkInTime && <span>เข้า: {todayRecord.checkInTime}</span>}
                  {todayRecord.checkInTime && todayRecord.checkOutTime && <span className="mx-2">|</span>}
                  {todayRecord.checkOutTime && <span>ออก: {todayRecord.checkOutTime}</span>}
@@ -261,7 +261,7 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
       {/* News Section */}
       <div>
         <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-          <Bell className="mr-2 text-orange-500" />
+          <Bell className="mr-2 text-orange-600" />
           ข่าวประชาสัมพันธ์ (News & Update)
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

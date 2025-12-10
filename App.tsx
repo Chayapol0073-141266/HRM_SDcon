@@ -66,7 +66,7 @@ const App: React.FC = () => {
 
   if (isInitializing) {
     return (
-        <div className="min-h-screen flex items-center justify-center bg-orange-50">
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
         </div>
     );
@@ -74,8 +74,8 @@ const App: React.FC = () => {
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-orange-50 p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-orange-100">
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-200">
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
                {/* Large Logo for Login Screen */}
@@ -90,7 +90,7 @@ const App: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้</label>
               <input 
                 type="text" 
-                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-300 outline-none transition"
+                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition"
                 placeholder="ระบุชื่อผู้ใช้"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -100,7 +100,7 @@ const App: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน</label>
               <input 
                 type="password" 
-                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-300 outline-none transition"
+                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition"
                 placeholder="ระบุรหัสผ่าน"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -111,7 +111,7 @@ const App: React.FC = () => {
 
             <button 
               type="submit" 
-              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5"
+              className="w-full bg-orange-600 text-white py-3 rounded-xl font-bold shadow-md hover:bg-orange-700 transition transform hover:-translate-y-0.5"
             >
               เข้าสู่ระบบ
             </button>

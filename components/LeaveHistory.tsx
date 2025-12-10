@@ -55,20 +55,20 @@ export const LeaveHistory: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <h2 className="text-xl font-bold text-gray-800 flex items-center">
-          <Calendar className="mr-2 text-orange-500" />
+          <Calendar className="mr-2 text-orange-600" />
           ประวัติการลาทั้งหมด (All Leave Requests)
         </h2>
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-orange-100 grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Search */}
         <div className="md:col-span-2 relative">
            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
            <input 
              type="text" 
              placeholder="ค้นหาชื่อพนักงาน หรือ เหตุผล..."
-             className="w-full pl-10 p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-200"
+             className="w-full pl-10 p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
              value={searchTerm}
              onChange={e => setSearchTerm(e.target.value)}
            />
@@ -78,7 +78,7 @@ export const LeaveHistory: React.FC = () => {
         <div className="relative">
            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
            <select 
-             className="w-full pl-10 p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none bg-white"
+             className="w-full pl-10 p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 appearance-none bg-white"
              value={typeFilter}
              onChange={e => setTypeFilter(e.target.value)}
            >
@@ -96,7 +96,7 @@ export const LeaveHistory: React.FC = () => {
               {statusFilter === LeaveStatus.REJECTED && <XCircle size={18} className="text-red-500" />}
            </div>
            <select 
-             className="w-full pl-10 p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none bg-white"
+             className="w-full pl-10 p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 appearance-none bg-white"
              value={statusFilter}
              onChange={e => setStatusFilter(e.target.value)}
            >
@@ -109,10 +109,10 @@ export const LeaveHistory: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
          <div className="overflow-x-auto">
            <table className="w-full text-left">
-             <thead className="bg-orange-50 text-orange-800">
+             <thead className="bg-gray-100 text-gray-700">
                <tr>
                  <th className="p-4 font-semibold">พนักงาน</th>
                  <th className="p-4 font-semibold">ประเภท/เหตุผล</th>
@@ -121,7 +121,7 @@ export const LeaveHistory: React.FC = () => {
                  <th className="p-4 font-semibold text-right">จัดการ</th>
                </tr>
              </thead>
-             <tbody className="divide-y divide-orange-50">
+             <tbody className="divide-y divide-gray-100">
                {filteredLeaves.map(req => (
                  <tr key={req.id} className="hover:bg-gray-50 transition">
                    <td className="p-4">

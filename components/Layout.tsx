@@ -47,16 +47,16 @@ export const Layout: React.FC<LayoutProps> = ({ user, onLogout, activeTab, setAc
   );
 
   return (
-    <div className="min-h-screen bg-orange-50 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-gray-100 flex flex-col md:flex-row">
       {/* Sidebar (Desktop) */}
-      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-orange-200 h-screen sticky top-0 shadow-sm z-20">
-        <div className="p-6 flex items-center justify-center border-b border-orange-100">
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-gray-200 h-screen sticky top-0 shadow-sm z-20">
+        <div className="p-6 flex items-center justify-center border-b border-gray-200">
            {/* Logo Component */}
            <Logo className="w-16 h-12 mr-2" />
            <h1 className="text-2xl font-bold text-orange-600 tracking-tight mt-1">SDcon</h1>
         </div>
         
-        <div className="p-4 border-b border-orange-100 bg-orange-50/50">
+        <div className="p-4 border-b border-gray-200 bg-gray-50">
           <p className="text-sm text-gray-500">ยินดีต้อนรับ,</p>
           <p className="font-semibold text-gray-800 truncate">{user.fullName}</p>
           <p className="text-xs text-orange-600 font-medium">{user.position}</p>
@@ -67,10 +67,10 @@ export const Layout: React.FC<LayoutProps> = ({ user, onLogout, activeTab, setAc
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                 activeTab === item.id 
-                  ? 'bg-orange-100 text-orange-700 shadow-sm' 
-                  : 'text-gray-600 hover:bg-orange-50 hover:text-orange-600'
+                  ? 'bg-orange-600 text-white shadow-md' 
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
               }`}
             >
               {item.icon}
@@ -79,7 +79,7 @@ export const Layout: React.FC<LayoutProps> = ({ user, onLogout, activeTab, setAc
           ))}
         </nav>
 
-        <div className="p-4 border-t border-orange-100">
+        <div className="p-4 border-t border-gray-200">
           <button 
             onClick={onLogout}
             className="w-full flex items-center justify-center space-x-2 px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors"
@@ -91,7 +91,7 @@ export const Layout: React.FC<LayoutProps> = ({ user, onLogout, activeTab, setAc
       </aside>
 
       {/* Mobile Header */}
-      <div className="md:hidden bg-white border-b border-orange-200 p-4 flex justify-between items-center sticky top-0 z-30 shadow-sm">
+      <div className="md:hidden bg-white border-b border-gray-200 p-4 flex justify-between items-center sticky top-0 z-30 shadow-sm">
         <div className="flex items-center">
            {/* Logo Component */}
            <Logo className="w-12 h-10 mr-2" />
@@ -106,7 +106,7 @@ export const Layout: React.FC<LayoutProps> = ({ user, onLogout, activeTab, setAc
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-20 bg-gray-800 bg-opacity-50" onClick={() => setIsMobileMenuOpen(false)}>
           <div className="bg-white w-3/4 h-full shadow-xl p-4 flex flex-col" onClick={e => e.stopPropagation()}>
-             <div className="mb-6 pb-4 border-b border-gray-100">
+             <div className="mb-6 pb-4 border-b border-gray-200">
                 <p className="text-lg font-bold text-gray-800">{user.fullName}</p>
                 <p className="text-sm text-orange-600">{user.position}</p>
              </div>
@@ -120,7 +120,7 @@ export const Layout: React.FC<LayoutProps> = ({ user, onLogout, activeTab, setAc
                   }}
                   className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg ${
                     activeTab === item.id 
-                      ? 'bg-orange-100 text-orange-700' 
+                      ? 'bg-orange-600 text-white' 
                       : 'text-gray-600'
                   }`}
                 >

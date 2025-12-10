@@ -5,26 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>HRM SDcon - ระบบบริหารงานบุคคล</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
               sans: ['Kanit', 'sans-serif'],
-            },
-            colors: {
-              orange: {
-                50: '#fff7ed',
-                100: '#ffedd5',
-                200: '#fed7aa',
-                300: '#fdba74',
-                400: '#fb923c',
-                500: '#f97316',
-                600: '#ea580c',
-                700: '#c2410c',
-                800: '#9a3412',
-                900: '#7c2d12',
-              }
             }
           }
         }
@@ -36,14 +24,17 @@
         width: 8px;
       }
       ::-webkit-scrollbar-track {
-        background: #fff7ed; 
+        background: #f3f4f6; 
       }
       ::-webkit-scrollbar-thumb {
-        background: #fdba74; 
+        background: #d1d5db; 
         border-radius: 4px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #fb923c; 
+        background: #9ca3af; 
+      }
+      .text-xxs {
+        font-size: 10px;
       }
     </style>
   <script type="importmap">
@@ -60,7 +51,7 @@
 }
 </script>
 </head>
-  <body class="bg-orange-50 text-slate-800">
+  <body class="bg-gray-100 text-slate-900">
     <div id="root"></div>
   </body>
 </html>

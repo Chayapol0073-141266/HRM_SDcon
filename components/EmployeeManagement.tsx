@@ -100,12 +100,12 @@ export const EmployeeManagement: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <h2 className="text-xl font-bold text-gray-800 flex items-center">
-          <UserIcon className="mr-2 text-orange-500" />
+          <UserIcon className="mr-2 text-orange-600" />
           จัดการข้อมูลพนักงาน (Employee Management)
         </h2>
         <button 
           onClick={handleCreate}
-          className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 flex items-center shadow-sm transition"
+          className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 flex items-center shadow-sm transition"
         >
           <Plus size={18} className="mr-2"/> เพิ่มพนักงานใหม่
         </button>
@@ -142,8 +142,8 @@ export const EmployeeManagement: React.FC = () => {
       )}
 
       {isFormOpen ? (
-        <div className="bg-white p-6 rounded-2xl shadow-lg border border-orange-100 animate-slide-down">
-          <div className="flex justify-between items-center mb-6 pb-2 border-b border-orange-100">
+        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 animate-slide-down">
+          <div className="flex justify-between items-center mb-6 pb-2 border-b border-gray-200">
             <h3 className="text-lg font-bold text-gray-700">
               {formData.id && users.some(u => u.id === formData.id) ? 'แก้ไขข้อมูลพนักงาน' : 'เพิ่มพนักงานใหม่'}
             </h3>
@@ -163,12 +163,12 @@ export const EmployeeManagement: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Basic Info */}
               <div className="space-y-4">
-                <h4 className="font-semibold text-orange-600 border-b border-orange-50 pb-1">ข้อมูลทั่วไป</h4>
+                <h4 className="font-semibold text-orange-600 border-b border-gray-100 pb-1">ข้อมูลทั่วไป</h4>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้ (Username/Login)</label>
                   <input 
                     type="text" required
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-300 outline-none"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                     value={formData.username || ''}
                     onChange={e => {
                       setFormData({...formData, username: e.target.value});
@@ -181,7 +181,7 @@ export const EmployeeManagement: React.FC = () => {
                    <input 
                      type="text" 
                      placeholder="ค่าเริ่มต้น: 1234"
-                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-300 outline-none"
+                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                      value={formData.password || ''}
                      onChange={e => setFormData({...formData, password: e.target.value})}
                    />
@@ -190,7 +190,7 @@ export const EmployeeManagement: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล (Full Name)</label>
                   <input 
                     type="text" required
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-300 outline-none"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                     value={formData.fullName || ''}
                     onChange={e => setFormData({...formData, fullName: e.target.value})}
                   />
@@ -199,7 +199,7 @@ export const EmployeeManagement: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">ตำแหน่ง (Position)</label>
                   <input 
                     type="text" required
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-300 outline-none"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                     value={formData.position || ''}
                     onChange={e => setFormData({...formData, position: e.target.value})}
                   />
@@ -207,7 +207,7 @@ export const EmployeeManagement: React.FC = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">แผนก (Department)</label>
                   <select 
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-300 outline-none"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                     value={formData.departmentCode || ''}
                     onChange={e => setFormData({...formData, departmentCode: e.target.value})}
                   >
@@ -220,11 +220,11 @@ export const EmployeeManagement: React.FC = () => {
 
               {/* Work Config */}
               <div className="space-y-4">
-                 <h4 className="font-semibold text-orange-600 border-b border-orange-50 pb-1">การทำงานและการลงเวลา</h4>
+                 <h4 className="font-semibold text-orange-600 border-b border-gray-100 pb-1">การทำงานและการลงเวลา</h4>
                  <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">รูปแบบการลงเวลา</label>
                   <select 
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-300 outline-none"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                     value={formData.attendanceType || AttendanceType.FIXED}
                     onChange={e => setFormData({...formData, attendanceType: e.target.value as AttendanceType})}
                   >
@@ -261,13 +261,13 @@ export const EmployeeManagement: React.FC = () => {
 
             {/* Roles */}
             <div>
-              <h4 className="font-semibold text-orange-600 border-b border-orange-50 pb-2 mb-3">สิทธิ์การใช้งาน (Roles)</h4>
+              <h4 className="font-semibold text-orange-600 border-b border-gray-100 pb-2 mb-3">สิทธิ์การใช้งาน (Roles)</h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {Object.values(Role).map(role => (
                   <label key={role} className="flex items-center space-x-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
                     <input 
                       type="checkbox"
-                      className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                      className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500"
                       checked={formData.role?.includes(role) || false}
                       onChange={() => toggleRole(role)}
                     />
@@ -287,7 +287,7 @@ export const EmployeeManagement: React.FC = () => {
                </button>
                <button 
                  type="submit" 
-                 className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 shadow-md font-medium flex items-center"
+                 className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 shadow-md font-medium flex items-center"
                >
                  <Save size={18} className="mr-2"/> บันทึกข้อมูล
                </button>
@@ -295,15 +295,15 @@ export const EmployeeManagement: React.FC = () => {
           </form>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
           {/* Search Bar */}
-          <div className="p-4 border-b border-orange-50 bg-orange-50/30">
+          <div className="p-4 border-b border-gray-200 bg-gray-50">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
               <input 
                 type="text" 
                 placeholder="ค้นหาชื่อ, username, หรือตำแหน่ง..."
-                className="w-full pl-10 p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-200"
+                className="w-full pl-10 p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
               />
@@ -312,7 +312,7 @@ export const EmployeeManagement: React.FC = () => {
 
           <div className="overflow-x-auto">
             <table className="w-full text-left">
-              <thead className="bg-orange-50 text-orange-800">
+              <thead className="bg-gray-100 text-gray-700">
                 <tr>
                   <th className="p-4 font-semibold">ชื่อ-นามสกุล</th>
                   <th className="p-4 font-semibold">แผนก/ตำแหน่ง</th>
@@ -321,7 +321,7 @@ export const EmployeeManagement: React.FC = () => {
                   <th className="p-4 font-semibold text-right">จัดการ</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-orange-50">
+              <tbody className="divide-y divide-gray-100">
                 {filteredUsers.map(user => (
                   <tr key={user.id} className="hover:bg-gray-50 transition">
                     <td className="p-4">
