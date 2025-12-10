@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect, useRef } from 'react';
-import { User, AttendanceType, SystemSettings, AttendanceRecord, NewsItem } from '../types';
-import { calculateDistance, getSettings, addAttendance, addLog, getAttendance, getNews } from '../services/db';
+import { User, AttendanceType, SystemSettings, AttendanceRecord } from '../types';
+import { calculateDistance, getSettings, addAttendance, addLog, getAttendance } from '../services/db';
 import { MapPin, Camera, CheckCircle, AlertTriangle, RefreshCw, Bell } from 'lucide-react';
-import { DEFAULT_SETTINGS } from '../constants';
+import { MOCK_NEWS } from '../constants';
 import { NewsCard } from './NewsCard';
 
 interface AttendanceProps {
@@ -13,30 +14,25 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [distance, setDistance] = useState<number | null>(null);
-  const [settings, setSettings] = useState<SystemSettings>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<SystemSettings>(getSettings());
   const [reason, setReason] = useState('');
   const [photo, setPhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [todayRecord, setTodayRecord] = useState<AttendanceRecord | null>(null);
-  const [newsList, setNewsList] = useState<NewsItem[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-        const s = await getSettings();
-        setSettings(s);
-        
-        const today = new Date().toISOString().split('T')[0];
-        const records = await getAttendance();
-        const found = records.find(r => r.userId === user.id && r.date === today);
-        setTodayRecord(found || null);
-
-        const news = await getNews();
-        setNewsList(news);
-    };
-    loadData();
+    loadTodayRecord();
+    // In a real app, we might watch position.
     getCurrentLocation();
   }, [user.id]);
+
+  const loadTodayRecord = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const records = getAttendance();
+    const found = records.find(r => r.userId === user.id && r.date === today);
+    setTodayRecord(found || null);
+  };
 
   const getCurrentLocation = () => {
     setLoading(true);
@@ -51,6 +47,14 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
       (position) => {
         const { latitude, longitude } = position.coords;
         setLocation({ lat: latitude, lng: longitude });
+        
+        const dist = calculateDistance(
+          latitude, 
+          longitude, 
+          settings.centerLat, 
+          settings.centerLng
+        );
+        setDistance(dist);
         setLoading(false);
       },
       (err) => {
@@ -60,19 +64,6 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
       { enableHighAccuracy: true, timeout: 10000 }
     );
   };
-
-  // Calculate distance whenever location or settings change
-  useEffect(() => {
-     if (location && settings) {
-        const dist = calculateDistance(
-            location.lat, 
-            location.lng, 
-            settings.centerLat, 
-            settings.centerLng
-        );
-        setDistance(dist);
-     }
-  }, [location, settings]);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -85,7 +76,7 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
     }
   };
 
-  const handleAction = async (type: 'CHECK_IN' | 'CHECK_OUT') => {
+  const handleAction = (type: 'CHECK_IN' | 'CHECK_OUT') => {
     if (!location || distance === null) {
       alert("กรุณาระบุตำแหน่งก่อนดำเนินการ");
       return;
@@ -129,13 +120,13 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
 
     if (type === 'CHECK_IN') {
       newRecord.checkInTime = timeString;
-      await addLog(user.id, 'CHECK_IN', `Checked in at ${timeString}`);
+      addLog(user.id, 'CHECK_IN', `Checked in at ${timeString}`);
     } else {
       newRecord.checkOutTime = timeString;
-      await addLog(user.id, 'CHECK_OUT', `Checked out at ${timeString}`);
+      addLog(user.id, 'CHECK_OUT', `Checked out at ${timeString}`);
     }
 
-    await addAttendance(newRecord);
+    addAttendance(newRecord);
     setTodayRecord(newRecord);
     alert(`${type === 'CHECK_IN' ? 'ลงเวลาเข้างาน' : 'ลงเวลาออกงาน'} เรียบร้อยแล้ว!`);
     
@@ -149,15 +140,15 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
   return (
     <div className="space-y-8">
       {/* Attendance Section */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-orange-100">
         <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-          <MapPin className="mr-2 text-orange-600" /> 
+          <MapPin className="mr-2 text-orange-500" /> 
           การลงเวลาทำงาน: {new Date().toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Location Info */}
-          <div className="bg-gray-50 p-4 rounded-xl space-y-3 border border-gray-100">
+          <div className="bg-orange-50 p-4 rounded-xl space-y-3">
              <div className="flex justify-between items-start">
                <div>
                  <p className="text-sm text-gray-500">พิกัดปัจจุบัน</p>
@@ -168,7 +159,7 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
                <button 
                 onClick={getCurrentLocation} 
                 disabled={loading}
-                className="p-2 bg-white text-orange-600 rounded-full shadow hover:bg-gray-100 transition"
+                className="p-2 bg-white text-orange-500 rounded-full shadow hover:bg-orange-100 transition"
                >
                  <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
                </button>
@@ -198,7 +189,7 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
                    placeholder="ระบุเหตุผล (เช่น พบลูกค้า, WFH)" 
                    value={reason}
                    onChange={(e) => setReason(e.target.value)}
-                   className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                   className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
                  />
                  <div className="flex items-center space-x-2">
                    <button 
@@ -228,7 +219,7 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
                   className={`py-3 rounded-xl font-bold shadow-sm transition-all ${
                     todayRecord?.checkInTime 
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                    : 'bg-orange-600 text-white hover:bg-orange-700 shadow-md'
+                    : 'bg-gradient-to-r from-orange-400 to-orange-500 text-white hover:shadow-md hover:from-orange-500 hover:to-orange-600'
                   }`}
                 >
                   {isExec ? 'บันทึกงาน' : 'เช็คอิน'}
@@ -240,7 +231,7 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
                   className={`py-3 rounded-xl font-bold shadow-sm transition-all ${
                     !todayRecord?.checkInTime || todayRecord?.checkOutTime
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                    : 'bg-white border-2 border-orange-600 text-orange-600 hover:bg-orange-50'
+                    : 'bg-white border-2 border-orange-500 text-orange-600 hover:bg-orange-50'
                   }`}
                 >
                    {isExec ? 'จบงาน' : 'เช็คเอาท์'}
@@ -248,7 +239,7 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
              </div>
 
              {todayRecord && (
-               <div className="text-center text-sm text-gray-600 bg-gray-50 p-2 rounded-lg border border-gray-100">
+               <div className="text-center text-sm text-gray-600 bg-orange-50/50 p-2 rounded-lg">
                  {todayRecord.checkInTime && <span>เข้า: {todayRecord.checkInTime}</span>}
                  {todayRecord.checkInTime && todayRecord.checkOutTime && <span className="mx-2">|</span>}
                  {todayRecord.checkOutTime && <span>ออก: {todayRecord.checkOutTime}</span>}
@@ -261,16 +252,13 @@ export const Attendance: React.FC<AttendanceProps> = ({ user }) => {
       {/* News Section */}
       <div>
         <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-          <Bell className="mr-2 text-orange-600" />
+          <Bell className="mr-2 text-orange-500" />
           ข่าวประชาสัมพันธ์ (News & Update)
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {newsList.map(news => (
+          {MOCK_NEWS.map(news => (
             <NewsCard key={news.id} news={news} />
           ))}
-          {newsList.length === 0 && (
-              <p className="text-gray-500 col-span-3 text-center">ยังไม่มีข่าวประชาสัมพันธ์</p>
-          )}
         </div>
       </div>
     </div>

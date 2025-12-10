@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { User, Role } from '../types';
-import { Logo } from './Logo';
 import { 
   LogOut, 
   Menu, 
@@ -13,7 +12,8 @@ import {
   ShieldCheck,
   MessageSquare,
   History,
-  Briefcase
+  Briefcase,
+  CalendarDays
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -32,6 +32,7 @@ export const Layout: React.FC<LayoutProps> = ({ user, onLogout, activeTab, setAc
 
   const menuItems = [
     { id: 'dashboard', label: 'แดชบอร์ด', icon: <Clock size={20} />, roles: [Role.EMPLOYEE, Role.SUPERUSER] },
+    { id: 'my_attendance', label: 'ประวัติการลงเวลา', icon: <CalendarDays size={20} />, roles: [Role.EMPLOYEE, Role.SUPERUSER] },
     { id: 'leave', label: 'ยื่นใบลา', icon: <FileText size={20} />, roles: [Role.EMPLOYEE, Role.SUPERUSER] },
     { id: 'approvals', label: 'รายการอนุมัติ', icon: <ShieldCheck size={20} />, roles: [Role.OM, Role.DM, Role.PM, Role.CEO, Role.SUP, Role.FM, Role.SUPERUSER] },
     { id: 'leave_history', label: 'ประวัติการลา (HR)', icon: <History size={20} />, roles: [Role.HR, Role.ADMIN, Role.SUPERUSER] },
@@ -47,16 +48,17 @@ export const Layout: React.FC<LayoutProps> = ({ user, onLogout, activeTab, setAc
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-orange-50 flex flex-col md:flex-row">
       {/* Sidebar (Desktop) */}
-      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-gray-200 h-screen sticky top-0 shadow-sm z-20">
-        <div className="p-6 flex items-center justify-center border-b border-gray-200">
-           {/* Logo Component */}
-           <Logo className="w-16 h-12 mr-2" />
-           <h1 className="text-2xl font-bold text-orange-600 tracking-tight mt-1">SDcon</h1>
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-orange-200 h-screen sticky top-0 shadow-sm z-20">
+        <div className="p-6 flex items-center justify-center border-b border-orange-100">
+           <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-xl mr-3">
+             HR
+           </div>
+           <h1 className="text-2xl font-bold text-orange-600 tracking-tight">SDcon</h1>
         </div>
         
-        <div className="p-4 border-b border-gray-200 bg-gray-50">
+        <div className="p-4 border-b border-orange-100 bg-orange-50/50">
           <p className="text-sm text-gray-500">ยินดีต้อนรับ,</p>
           <p className="font-semibold text-gray-800 truncate">{user.fullName}</p>
           <p className="text-xs text-orange-600 font-medium">{user.position}</p>
@@ -67,10 +69,10 @@ export const Layout: React.FC<LayoutProps> = ({ user, onLogout, activeTab, setAc
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                 activeTab === item.id 
-                  ? 'bg-orange-600 text-white shadow-md' 
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  ? 'bg-orange-100 text-orange-700 shadow-sm' 
+                  : 'text-gray-600 hover:bg-orange-50 hover:text-orange-600'
               }`}
             >
               {item.icon}
@@ -79,7 +81,7 @@ export const Layout: React.FC<LayoutProps> = ({ user, onLogout, activeTab, setAc
           ))}
         </nav>
 
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-orange-100">
           <button 
             onClick={onLogout}
             className="w-full flex items-center justify-center space-x-2 px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors"
@@ -91,10 +93,11 @@ export const Layout: React.FC<LayoutProps> = ({ user, onLogout, activeTab, setAc
       </aside>
 
       {/* Mobile Header */}
-      <div className="md:hidden bg-white border-b border-gray-200 p-4 flex justify-between items-center sticky top-0 z-30 shadow-sm">
+      <div className="md:hidden bg-white border-b border-orange-200 p-4 flex justify-between items-center sticky top-0 z-30 shadow-sm">
         <div className="flex items-center">
-           {/* Logo Component */}
-           <Logo className="w-12 h-10 mr-2" />
+           <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-sm mr-2">
+             HR
+           </div>
            <span className="font-bold text-orange-600 text-lg">SDcon</span>
         </div>
         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600">
@@ -106,7 +109,7 @@ export const Layout: React.FC<LayoutProps> = ({ user, onLogout, activeTab, setAc
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-20 bg-gray-800 bg-opacity-50" onClick={() => setIsMobileMenuOpen(false)}>
           <div className="bg-white w-3/4 h-full shadow-xl p-4 flex flex-col" onClick={e => e.stopPropagation()}>
-             <div className="mb-6 pb-4 border-b border-gray-200">
+             <div className="mb-6 pb-4 border-b border-gray-100">
                 <p className="text-lg font-bold text-gray-800">{user.fullName}</p>
                 <p className="text-sm text-orange-600">{user.position}</p>
              </div>
@@ -120,7 +123,7 @@ export const Layout: React.FC<LayoutProps> = ({ user, onLogout, activeTab, setAc
                   }}
                   className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg ${
                     activeTab === item.id 
-                      ? 'bg-orange-600 text-white' 
+                      ? 'bg-orange-100 text-orange-700' 
                       : 'text-gray-600'
                   }`}
                 >

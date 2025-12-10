@@ -9,7 +9,7 @@ import { GeminiChat } from './components/GeminiChat';
 import { EmployeeManagement } from './components/EmployeeManagement';
 import { LeaveHistory } from './components/LeaveHistory';
 import { WorkHistory } from './components/WorkHistory';
-import { Logo } from './components/Logo';
+import { MyAttendanceHistory } from './components/MyAttendanceHistory';
 import { User, Role } from './types';
 import { initDB, getUser, addLog } from './services/db';
 import { initializeGemini } from './services/geminiService';
@@ -20,28 +20,22 @@ const App: React.FC = () => {
   const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState('dashboard');
   const [error, setError] = useState('');
-  const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
-    const startApp = async () => {
-        await initDB();
-        setIsInitializing(false);
-    }
-    startApp();
-
+    initDB();
     // Initialize Gemini with environment key if available
     if (process.env.API_KEY) {
       initializeGemini(process.env.API_KEY);
     }
   }, []);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
     // Specific Superuser Check
     if (username === 'chayapol' && password === '@Thansandee141266') {
-       const superUser = await getUser('chayapol');
+       const superUser = getUser('chayapol');
        if(superUser) {
          setCurrentUser(superUser);
          addLog(superUser.id, 'LOGIN', 'Superuser Login');
@@ -49,8 +43,8 @@ const App: React.FC = () => {
        }
     }
 
-    // Normal User Login
-    const user = await getUser(username);
+    // Normal User Mock Login
+    const user = getUser(username);
     if (user) {
       // Check if user has specific password, else default to '1234'
       const validPass = user.password || '1234';
@@ -64,25 +58,16 @@ const App: React.FC = () => {
     setError('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
   };
 
-  if (isInitializing) {
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
-        </div>
-    );
-  }
-
   if (!currentUser) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-200">
+      <div className="min-h-screen flex items-center justify-center bg-orange-50 p-4">
+        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-orange-100">
           <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-               {/* Large Logo for Login Screen */}
-               <Logo className="w-24 h-24" />
+            <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">
+              HR
             </div>
             <h1 className="text-2xl font-bold text-gray-800">HRM SDcon</h1>
-            <p className="text-gray-500">ลงชื่อเข้าใช้ระบบ (Supabase Connected)</p>
+            <p className="text-gray-500">ลงชื่อเข้าใช้ระบบ</p>
           </div>
           
           <form onSubmit={handleLogin} className="space-y-6">
@@ -90,7 +75,7 @@ const App: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้</label>
               <input 
                 type="text" 
-                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition"
+                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-300 outline-none transition"
                 placeholder="ระบุชื่อผู้ใช้"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -100,7 +85,7 @@ const App: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน</label>
               <input 
                 type="password" 
-                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition"
+                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-300 outline-none transition"
                 placeholder="ระบุรหัสผ่าน"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -111,7 +96,7 @@ const App: React.FC = () => {
 
             <button 
               type="submit" 
-              className="w-full bg-orange-600 text-white py-3 rounded-xl font-bold shadow-md hover:bg-orange-700 transition transform hover:-translate-y-0.5"
+              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5"
             >
               เข้าสู่ระบบ
             </button>
@@ -136,6 +121,7 @@ const App: React.FC = () => {
       setActiveTab={setActiveTab}
     >
       {activeTab === 'dashboard' && <Attendance user={currentUser} />}
+      {activeTab === 'my_attendance' && <MyAttendanceHistory user={currentUser} />}
       {activeTab === 'leave' && <LeaveRequestPanel user={currentUser} />}
       {activeTab === 'approvals' && <ApprovalPanel currentUser={currentUser} />}
       {activeTab === 'leave_history' && <LeaveHistory />}
@@ -146,7 +132,7 @@ const App: React.FC = () => {
       {activeTab === 'ai_help' && <GeminiChat />}
       
       {/* Fallback for empty or unauthorized tabs */}
-      {!['dashboard', 'leave', 'approvals', 'leave_history', 'hr_manage', 'reports', 'settings', 'ai_help', 'work_history'].includes(activeTab) && (
+      {!['dashboard', 'my_attendance', 'leave', 'approvals', 'leave_history', 'hr_manage', 'reports', 'settings', 'ai_help', 'work_history'].includes(activeTab) && (
         <div className="text-center p-10 text-gray-500">
            ส่วนงาน "{activeTab}" กำลังพัฒนา
         </div>

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { User, LeaveRequest, LeaveStatus, Role } from '../types';
 import { LEAVE_TYPES, DEPARTMENTS } from '../constants';
 import { saveLeave, getLeaves, addLog } from '../services/db';
-import { PlusCircle, Clock, CheckCircle, XCircle, FileText, Calendar, ChevronRight } from 'lucide-react';
+import { PlusCircle, Clock, CheckCircle, XCircle, FileText, Calendar, ChevronRight, BarChart2 } from 'lucide-react';
 
 interface LeaveRequestProps {
   user: User;
@@ -22,13 +22,21 @@ export const LeaveRequestPanel: React.FC<LeaveRequestProps> = ({ user }) => {
     loadHistory();
   }, [user.id, showForm]);
 
-  const loadHistory = async () => {
-    const allLeaves = await getLeaves();
+  const loadHistory = () => {
+    const allLeaves = getLeaves();
     const myLeaves = allLeaves.filter(l => l.userId === user.id).sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
     setHistory(myLeaves);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const stats = useMemo(() => {
+    return {
+      approved: history.filter(l => l.status === LeaveStatus.APPROVED).length,
+      pending: history.filter(l => l.status === LeaveStatus.PENDING).length,
+      rejected: history.filter(l => l.status === LeaveStatus.REJECTED).length,
+    };
+  }, [history]);
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.startDate || !formData.endDate) return;
 
@@ -54,11 +62,10 @@ export const LeaveRequestPanel: React.FC<LeaveRequestProps> = ({ user }) => {
       approvals: [],
     };
 
-    await saveLeave(newLeave);
-    await addLog(user.id, 'LEAVE_REQUEST', `Requested ${formData.type} from ${formData.startDate}`);
+    saveLeave(newLeave);
+    addLog(user.id, 'LEAVE_REQUEST', `Requested ${formData.type} from ${formData.startDate}`);
     setShowForm(false);
     setFormData({ type: LEAVE_TYPES[0], startDate: '', endDate: '', reason: '' });
-    loadHistory();
     alert("ส่งคำขอลาเรียบร้อยแล้ว!");
   };
 
@@ -67,27 +74,57 @@ export const LeaveRequestPanel: React.FC<LeaveRequestProps> = ({ user }) => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-xl font-bold text-gray-800 flex items-center">
-            <FileText className="mr-2 text-orange-600"/> ประวัติการลาของฉัน
+            <FileText className="mr-2 text-orange-500"/> ข้อมูลและประวัติการลา (Leave Dashboard)
           </h2>
-          <p className="text-sm text-gray-500">ติดตามสถานะการอนุมัติและประวัติการลาย้อนหลัง</p>
         </div>
         <button 
           onClick={() => setShowForm(!showForm)}
-          className="bg-orange-600 text-white px-5 py-2.5 rounded-xl hover:bg-orange-700 shadow-md flex items-center transition-all transform hover:-translate-y-0.5 font-medium"
+          className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-5 py-2.5 rounded-xl hover:shadow-lg flex items-center transition-all transform hover:-translate-y-0.5 font-medium"
         >
           {showForm ? 'ยกเลิก' : <><PlusCircle size={20} className="mr-2"/> ยื่นใบลาใหม่</>}
         </button>
       </div>
 
+      {/* Leave Summary Dashboard */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+         <div className="bg-white p-5 rounded-2xl shadow-sm border border-green-100 flex items-center space-x-4">
+             <div className="p-3 bg-green-50 text-green-600 rounded-full">
+               <CheckCircle size={24} />
+             </div>
+             <div>
+               <p className="text-gray-500 text-sm">อนุมัติแล้ว</p>
+               <p className="text-2xl font-bold text-gray-800">{stats.approved} <span className="text-sm font-normal text-gray-400">รายการ</span></p>
+             </div>
+         </div>
+         <div className="bg-white p-5 rounded-2xl shadow-sm border border-yellow-100 flex items-center space-x-4">
+             <div className="p-3 bg-yellow-50 text-yellow-600 rounded-full">
+               <Clock size={24} />
+             </div>
+             <div>
+               <p className="text-gray-500 text-sm">รออนุมัติ</p>
+               <p className="text-2xl font-bold text-gray-800">{stats.pending} <span className="text-sm font-normal text-gray-400">รายการ</span></p>
+             </div>
+         </div>
+         <div className="bg-white p-5 rounded-2xl shadow-sm border border-red-100 flex items-center space-x-4">
+             <div className="p-3 bg-red-50 text-red-600 rounded-full">
+               <XCircle size={24} />
+             </div>
+             <div>
+               <p className="text-gray-500 text-sm">ไม่ผ่านการอนุมัติ</p>
+               <p className="text-2xl font-bold text-gray-800">{stats.rejected} <span className="text-sm font-normal text-gray-400">รายการ</span></p>
+             </div>
+         </div>
+      </div>
+
       {showForm && (
-        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 animate-slide-down">
-          <h3 className="text-lg font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2">แบบฟอร์มขอลาหยุด</h3>
+        <div className="bg-white p-6 rounded-2xl shadow-lg border border-orange-100 animate-slide-down">
+          <h3 className="text-lg font-bold text-gray-800 mb-4 border-b border-orange-50 pb-2">แบบฟอร์มขอลาหยุด</h3>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">ประเภทการลา</label>
                 <select 
-                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition"
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-300 outline-none transition"
                   value={formData.type}
                   onChange={e => setFormData({...formData, type: e.target.value})}
                 >
@@ -100,7 +137,7 @@ export const LeaveRequestPanel: React.FC<LeaveRequestProps> = ({ user }) => {
                     <input 
                       type="date" 
                       required
-                      className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition"
+                      className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-300 outline-none transition"
                       value={formData.startDate}
                       onChange={e => setFormData({...formData, startDate: e.target.value})}
                     />
@@ -110,7 +147,7 @@ export const LeaveRequestPanel: React.FC<LeaveRequestProps> = ({ user }) => {
                     <input 
                       type="date" 
                       required
-                      className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition"
+                      className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-300 outline-none transition"
                       value={formData.endDate}
                       onChange={e => setFormData({...formData, endDate: e.target.value})}
                     />
@@ -120,7 +157,7 @@ export const LeaveRequestPanel: React.FC<LeaveRequestProps> = ({ user }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">เหตุผลการลา</label>
               <textarea 
-                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition"
+                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-300 outline-none transition"
                 rows={3}
                 placeholder="ระบุรายละเอียด..."
                 required
@@ -129,7 +166,7 @@ export const LeaveRequestPanel: React.FC<LeaveRequestProps> = ({ user }) => {
               />
             </div>
             <div className="flex justify-end pt-2">
-              <button type="submit" className="bg-orange-600 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-orange-700 shadow-md transition">
+              <button type="submit" className="bg-orange-500 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-orange-600 shadow-md transition">
                 ยืนยันการลา
               </button>
             </div>
@@ -137,18 +174,18 @@ export const LeaveRequestPanel: React.FC<LeaveRequestProps> = ({ user }) => {
         </div>
       )}
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden">
          {history.length === 0 ? (
            <div className="p-10 text-center flex flex-col items-center text-gray-400">
-             <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-3">
-               <FileText size={32} className="text-gray-300" />
+             <div className="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mb-3">
+               <FileText size={32} className="text-orange-200" />
              </div>
              <p>ยังไม่มีประวัติการลา</p>
            </div>
          ) : (
            <div className="overflow-x-auto">
              <table className="w-full text-left">
-               <thead className="bg-gray-100 text-gray-700 border-b border-gray-200">
+               <thead className="bg-orange-50 text-orange-800 border-b border-orange-100">
                  <tr>
                    <th className="p-4 font-semibold w-1/4">ประเภท/เหตุผล</th>
                    <th className="p-4 font-semibold w-1/4">ช่วงเวลา</th>
@@ -156,16 +193,16 @@ export const LeaveRequestPanel: React.FC<LeaveRequestProps> = ({ user }) => {
                    <th className="p-4 font-semibold">ขั้นตอนการอนุมัติ (Approval Chain)</th>
                  </tr>
                </thead>
-               <tbody className="divide-y divide-gray-100">
+               <tbody className="divide-y divide-orange-50">
                  {history.map(req => (
-                   <tr key={req.id} className="hover:bg-gray-50 transition">
+                   <tr key={req.id} className="hover:bg-orange-50/30 transition">
                      <td className="p-4 align-top">
                        <span className="font-bold text-gray-800 block mb-1">{req.leaveType}</span>
                        <p className="text-sm text-gray-500 line-clamp-2">"{req.reason}"</p>
                      </td>
                      <td className="p-4 align-top">
-                       <div className="flex items-center text-sm text-gray-700 bg-gray-50 px-3 py-1.5 rounded-lg w-fit border border-gray-200">
-                         <Calendar size={14} className="mr-2 text-gray-400"/>
+                       <div className="flex items-center text-sm text-gray-700 bg-gray-50 px-3 py-1.5 rounded-lg w-fit">
+                         <Calendar size={14} className="mr-2 text-orange-400"/>
                          {new Date(req.startDate).toLocaleDateString('th-TH')} - {new Date(req.endDate).toLocaleDateString('th-TH')}
                        </div>
                      </td>
@@ -203,6 +240,7 @@ export const LeaveRequestPanel: React.FC<LeaveRequestProps> = ({ user }) => {
                            }
 
                            // Line color based on PREVIOUS step status
+                           // If index > 0, we draw a line connecting from prev
                            let lineClass = "bg-gray-200";
                            if (idx > 0) {
                              const prevApproval = req.approvals[idx-1];

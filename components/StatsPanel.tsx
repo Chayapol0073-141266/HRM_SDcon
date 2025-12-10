@@ -1,26 +1,13 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { getAttendance, getLeaves, getUsers } from '../services/db';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell 
 } from 'recharts';
-import { AttendanceRecord, LeaveRequest, User } from '../types';
 
 export const StatsPanel: React.FC = () => {
-  const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
-  const [leaveData, setLeaveData] = useState<LeaveRequest[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
-
-  useEffect(() => {
-    const loadData = async () => {
-        const att = await getAttendance();
-        const leaves = await getLeaves();
-        const us = await getUsers();
-        setAttendanceData(att);
-        setLeaveData(leaves);
-        setUsers(us);
-    };
-    loadData();
-  }, []);
+  const attendanceData = getAttendance();
+  const leaveData = getLeaves();
+  const users = getUsers();
 
   // Aggregate Attendance Status
   const statusCounts = useMemo(() => {
@@ -58,7 +45,7 @@ export const StatsPanel: React.FC = () => {
        <h2 className="text-xl font-bold text-gray-800">ภาพรวมสถิติ HR</h2>
        
        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 h-80">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-orange-100 h-80">
             <h3 className="text-lg font-semibold mb-4 text-gray-700">สัดส่วนการมาทำงาน</h3>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -81,15 +68,15 @@ export const StatsPanel: React.FC = () => {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 h-80">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-orange-100 h-80">
              <h3 className="text-lg font-semibold mb-4 text-gray-700">จำนวนพนักงานตามแผนก</h3>
              <ResponsiveContainer width="100%" height="100%">
                <BarChart data={deptData}>
                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
                  <XAxis dataKey="name" />
                  <YAxis />
-                 <Tooltip cursor={{fill: '#f3f4f6'}} />
-                 <Bar dataKey="count" fill="#ea580c" radius={[4, 4, 0, 0]} />
+                 <Tooltip cursor={{fill: '#fff7ed'}} />
+                 <Bar dataKey="count" fill="#fb923c" radius={[4, 4, 0, 0]} />
                </BarChart>
              </ResponsiveContainer>
           </div>
@@ -97,21 +84,21 @@ export const StatsPanel: React.FC = () => {
 
        {/* Simple Text Summary */}
        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-orange-600 text-white p-4 rounded-xl shadow-sm">
+          <div className="bg-orange-500 text-white p-4 rounded-xl">
              <p className="text-sm opacity-80">พนักงานทั้งหมด</p>
              <p className="text-2xl font-bold">{users.length}</p>
           </div>
-          <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
+          <div className="bg-white border border-orange-200 p-4 rounded-xl">
              <p className="text-sm text-gray-500">เช็คอินวันนี้</p>
              <p className="text-2xl font-bold text-orange-600">{attendanceData.length}</p>
           </div>
-          <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
+          <div className="bg-white border border-orange-200 p-4 rounded-xl">
              <p className="text-sm text-gray-500">ใบลาค้างอนุมัติ</p>
              <p className="text-2xl font-bold text-orange-600">
                {leaveData.filter(l => l.status === 'PENDING').length}
              </p>
           </div>
-          <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
+          <div className="bg-white border border-orange-200 p-4 rounded-xl">
              <p className="text-sm text-gray-500">มาสาย</p>
              <p className="text-2xl font-bold text-red-500">
                {statusCounts.find(s => s.name === 'สาย')?.value || 0}

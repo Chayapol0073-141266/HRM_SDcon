@@ -1,20 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { getSettings, saveSettings } from '../services/db';
 import { Save, Clock, MapPin, Calculator, Plus, Trash2, Calendar } from 'lucide-react';
 import { SystemSettings, ShiftConfig } from '../types';
-import { DEFAULT_SETTINGS } from '../constants';
 
 export const SettingsPanel: React.FC = () => {
-  const [settings, setSettings] = useState<SystemSettings>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<SystemSettings>(getSettings());
   const [activeTab, setActiveTab] = useState<'general' | 'ot'>('general');
-
-  useEffect(() => {
-    const loadData = async () => {
-        const s = await getSettings();
-        setSettings(s);
-    }
-    loadData();
-  }, []);
 
   // OT Calculator State
   const [calcShiftId, setCalcShiftId] = useState('');
@@ -25,8 +16,8 @@ export const SettingsPanel: React.FC = () => {
   // New Shift State
   const [newShift, setNewShift] = useState<Partial<ShiftConfig>>({ name: '', startTime: '', endTime: '' });
 
-  const handleSave = async () => {
-    await saveSettings(settings);
+  const handleSave = () => {
+    saveSettings(settings);
     alert("บันทึกการตั้งค่าเรียบร้อยแล้ว!");
   };
 
@@ -58,6 +49,8 @@ export const SettingsPanel: React.FC = () => {
     const actualOutMin = outH * 60 + outM;
 
     // Simple logic: OT is time worked after shift ends
+    // Handles next day crossing roughly by checking if out < end (implies next day if it's PM shift)
+    // For simplicity, we assume same day unless specified (improved logic would require full Date objects)
     let diffMinutes = actualOutMin - shiftEndMin;
     
     // Correction for crossing midnight (e.g. shift ends 17:00, out 01:00 next day? Not handled here for simplicity demo)
@@ -74,12 +67,12 @@ export const SettingsPanel: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-      <div className="flex border-b border-gray-200">
+    <div className="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden">
+      <div className="flex border-b border-orange-100">
         <button
           onClick={() => setActiveTab('general')}
           className={`flex-1 py-4 font-medium text-sm flex items-center justify-center space-x-2 ${
-            activeTab === 'general' ? 'bg-gray-50 text-orange-600 border-b-2 border-orange-500' : 'text-gray-500 hover:bg-gray-50'
+            activeTab === 'general' ? 'bg-orange-50 text-orange-600 border-b-2 border-orange-500' : 'text-gray-500 hover:bg-gray-50'
           }`}
         >
           <MapPin size={18} />
@@ -88,7 +81,7 @@ export const SettingsPanel: React.FC = () => {
         <button
           onClick={() => setActiveTab('ot')}
           className={`flex-1 py-4 font-medium text-sm flex items-center justify-center space-x-2 ${
-            activeTab === 'ot' ? 'bg-gray-50 text-orange-600 border-b-2 border-orange-500' : 'text-gray-500 hover:bg-gray-50'
+            activeTab === 'ot' ? 'bg-orange-50 text-orange-600 border-b-2 border-orange-500' : 'text-gray-500 hover:bg-gray-50'
           }`}
         >
           <Clock size={18} />
@@ -146,11 +139,11 @@ export const SettingsPanel: React.FC = () => {
             {/* OT Rates */}
             <div>
               <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                 <Calendar className="mr-2 text-orange-600" size={20}/> 
+                 <Calendar className="mr-2 text-orange-500" size={20}/> 
                  อัตราคูณค่าล่วงเวลา (OT Rate Multipliers)
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                 <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                 <div className="bg-orange-50 p-4 rounded-xl">
                     <label className="block text-sm font-medium text-gray-700 mb-1">วันธรรมดา (Weekday)</label>
                     <div className="flex items-center">
                        <span className="text-gray-500 mr-2">x</span>
@@ -162,7 +155,7 @@ export const SettingsPanel: React.FC = () => {
                        />
                     </div>
                  </div>
-                 <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                 <div className="bg-red-50 p-4 rounded-xl">
                     <label className="block text-sm font-medium text-gray-700 mb-1">วันหยุดเสาร์-อาทิตย์ (Weekend)</label>
                     <div className="flex items-center">
                        <span className="text-gray-500 mr-2">x</span>
@@ -174,7 +167,7 @@ export const SettingsPanel: React.FC = () => {
                        />
                     </div>
                  </div>
-                 <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                 <div className="bg-purple-50 p-4 rounded-xl">
                     <label className="block text-sm font-medium text-gray-700 mb-1">วันหยุดนักขัตฤกษ์ (Holiday)</label>
                     <div className="flex items-center">
                        <span className="text-gray-500 mr-2">x</span>
@@ -192,7 +185,7 @@ export const SettingsPanel: React.FC = () => {
             {/* Shift Config */}
             <div>
                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                 <Clock className="mr-2 text-orange-600" size={20}/> 
+                 <Clock className="mr-2 text-orange-500" size={20}/> 
                  จัดการกะการทำงาน (Shift Management)
                </h3>
                
@@ -222,7 +215,7 @@ export const SettingsPanel: React.FC = () => {
                       onChange={e => setNewShift({...newShift, endTime: e.target.value})}
                     />
                   </div>
-                  <button onClick={handleAddShift} className="bg-green-600 text-white p-2 rounded-lg hover:bg-green-700">
+                  <button onClick={handleAddShift} className="bg-green-500 text-white p-2 rounded-lg hover:bg-green-600">
                      <Plus size={20} />
                   </button>
                </div>
@@ -247,15 +240,15 @@ export const SettingsPanel: React.FC = () => {
             {/* OT Calculator Playground */}
             <div>
               <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                 <Calculator className="mr-2 text-orange-600" size={20}/> 
+                 <Calculator className="mr-2 text-orange-500" size={20}/> 
                  ทดลองคำนวณโอที (OT Calculator Preview)
               </h3>
-              <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200">
+              <div className="bg-gradient-to-br from-orange-50 to-white p-6 rounded-2xl border border-orange-200">
                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                     <div>
                        <label className="block text-xs font-medium text-gray-500 mb-1">เลือกกะงาน</label>
                        <select 
-                         className="w-full p-2 border border-gray-300 rounded-lg"
+                         className="w-full p-2 border border-orange-200 rounded-lg"
                          value={calcShiftId}
                          onChange={e => setCalcShiftId(e.target.value)}
                        >
@@ -267,7 +260,7 @@ export const SettingsPanel: React.FC = () => {
                        <label className="block text-xs font-medium text-gray-500 mb-1">เวลาเลิกงานจริง</label>
                        <input 
                          type="time" 
-                         className="w-full p-2 border border-gray-300 rounded-lg"
+                         className="w-full p-2 border border-orange-200 rounded-lg"
                          value={calcCheckOut}
                          onChange={e => setCalcCheckOut(e.target.value)}
                        />
@@ -275,7 +268,7 @@ export const SettingsPanel: React.FC = () => {
                     <div>
                        <label className="block text-xs font-medium text-gray-500 mb-1">ประเภทวัน</label>
                        <select 
-                         className="w-full p-2 border border-gray-300 rounded-lg"
+                         className="w-full p-2 border border-orange-200 rounded-lg"
                          value={calcType}
                          onChange={e => setCalcType(e.target.value as any)}
                        >
@@ -296,14 +289,14 @@ export const SettingsPanel: React.FC = () => {
                  </div>
 
                  {calcResult && (
-                    <div className="mt-4 p-4 bg-white rounded-xl shadow-sm border border-gray-200 grid grid-cols-3 gap-4 text-center">
+                    <div className="mt-4 p-4 bg-white rounded-xl shadow-sm border border-orange-100 grid grid-cols-3 gap-4 text-center">
                        <div>
                           <p className="text-xs text-gray-500">จำนวนชั่วโมง OT</p>
                           <p className="text-xl font-bold text-gray-800">{calcResult.hours} ชม.</p>
                        </div>
                        <div>
                           <p className="text-xs text-gray-500">อัตราคูณ</p>
-                          <p className="text-xl font-bold text-orange-600">x{calcResult.multiplier}</p>
+                          <p className="text-xl font-bold text-orange-500">x{calcResult.multiplier}</p>
                        </div>
                        <div>
                           <p className="text-xs text-gray-500">หน่วยค่าตอบแทน</p>
@@ -316,7 +309,7 @@ export const SettingsPanel: React.FC = () => {
           </div>
         )}
 
-        <div className="pt-6 mt-6 border-t border-gray-200">
+        <div className="pt-6 mt-6 border-t border-orange-100">
           <button
             onClick={handleSave}
             className="flex items-center justify-center w-full bg-orange-600 text-white py-3 rounded-xl font-bold shadow-md hover:bg-orange-700 transition"

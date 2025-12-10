@@ -14,8 +14,8 @@ export const ApprovalPanel: React.FC<ApprovalPanelProps> = ({ currentUser }) => 
     loadRequests();
   }, [currentUser]);
 
-  const loadRequests = async () => {
-    const all = await getLeaves();
+  const loadRequests = () => {
+    const all = getLeaves();
     // Filter logic:
     // 1. Request status is PENDING
     // 2. currentApproverRole matches one of the currentUser's roles (OR user is SUPERUSER)
@@ -31,7 +31,7 @@ export const ApprovalPanel: React.FC<ApprovalPanelProps> = ({ currentUser }) => 
     setPendingRequests(relevant);
   };
 
-  const handleDecision = async (req: LeaveRequest, approved: boolean) => {
+  const handleDecision = (req: LeaveRequest, approved: boolean) => {
     const updatedReq = { ...req };
     const currentRoleIndex = updatedReq.approvalChain.indexOf(updatedReq.currentApproverRole as any);
     
@@ -56,8 +56,8 @@ export const ApprovalPanel: React.FC<ApprovalPanelProps> = ({ currentUser }) => 
       }
     }
 
-    await saveLeave(updatedReq);
-    await addLog(currentUser.id, approved ? 'APPROVE_LEAVE' : 'REJECT_LEAVE', `Leave ID ${req.id} decision made.`);
+    saveLeave(updatedReq);
+    addLog(currentUser.id, approved ? 'APPROVE_LEAVE' : 'REJECT_LEAVE', `Leave ID ${req.id} decision made.`);
     loadRequests(); // Refresh
   };
 
@@ -67,16 +67,16 @@ export const ApprovalPanel: React.FC<ApprovalPanelProps> = ({ currentUser }) => 
       
       <div className="grid grid-cols-1 gap-4">
         {pendingRequests.length === 0 ? (
-           <div className="bg-white p-8 rounded-2xl border border-gray-200 text-center text-gray-500">
+           <div className="bg-white p-8 rounded-2xl border border-orange-100 text-center text-gray-500">
              ไม่มีรายการรออนุมัติในขณะนี้
            </div>
         ) : (
           pendingRequests.map(req => (
-            <div key={req.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div key={req.id} className="bg-white p-6 rounded-2xl shadow-sm border border-orange-100 flex flex-col md:flex-row justify-between items-start md:items-center">
               <div>
                 <div className="flex items-center space-x-2 mb-2">
                    <span className="font-bold text-lg text-gray-800">{req.leaveType}</span>
-                   <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full border border-gray-200">
+                   <span className="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">
                      ขอโดย: {req.userId}
                    </span>
                 </div>
@@ -95,7 +95,7 @@ export const ApprovalPanel: React.FC<ApprovalPanelProps> = ({ currentUser }) => 
                  </button>
                  <button 
                    onClick={() => handleDecision(req, true)}
-                   className="flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 shadow-sm transition"
+                   className="flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 shadow-sm transition"
                  >
                    <Check size={18} className="mr-2" /> อนุมัติ
                  </button>

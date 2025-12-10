@@ -17,8 +17,8 @@ export const GeminiChat: React.FC = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[500px]">
-       <div className="flex items-center mb-4 pb-4 border-b border-gray-200">
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-orange-100 flex flex-col h-[500px]">
+       <div className="flex items-center mb-4 pb-4 border-b border-orange-100">
          <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 mr-3">
             <Bot size={24} />
          </div>
@@ -38,7 +38,7 @@ export const GeminiChat: React.FC = () => {
           {query && response && (
             <>
               <div className="flex justify-end">
-                <div className="bg-orange-600 text-white p-3 rounded-tl-xl rounded-tr-xl rounded-bl-xl shadow-sm text-sm max-w-[80%]">
+                <div className="bg-orange-500 text-white p-3 rounded-tl-xl rounded-tr-xl rounded-bl-xl shadow-sm text-sm max-w-[80%]">
                   {query}
                 </div>
               </div>
@@ -60,7 +60,7 @@ export const GeminiChat: React.FC = () => {
        <div className="flex items-center space-x-2">
          <input 
            type="text" 
-           className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+           className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-300 outline-none"
            placeholder="พิมพ์คำถามของคุณที่นี่..."
            value={query}
            onChange={(e) => setQuery(e.target.value)}
@@ -69,7 +69,7 @@ export const GeminiChat: React.FC = () => {
          <button 
            onClick={handleAsk}
            disabled={loading}
-           className="bg-orange-600 text-white p-3 rounded-lg hover:bg-orange-700 disabled:bg-gray-300"
+           className="bg-orange-500 text-white p-3 rounded-lg hover:bg-orange-600 disabled:bg-gray-300"
          >
            <Send size={20} />
          </button>
