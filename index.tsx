@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import './index.css';
-import '@fontsource/kanit'; // Defaults to weight 400
+import './styles.css';
+// Import local font package
 import '@fontsource/kanit/300.css';
+import '@fontsource/kanit/400.css';
 import '@fontsource/kanit/500.css';
 import '@fontsource/kanit/600.css';
 

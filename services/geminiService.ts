@@ -1,17 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 
-let genAI: GoogleGenAI | null = null;
-
-export const initializeGemini = (apiKey: string) => {
-  if (!apiKey) return;
-  genAI = new GoogleGenAI({ apiKey });
-};
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const askHRPolicy = async (question: string): Promise<string> => {
-  if (!genAI || !process.env.API_KEY) {
-    return "ยังไม่ได้เริ่มระบบ AI หรือไม่พบ API Key";
-  }
-
   try {
     const model = 'gemini-2.5-flash';
     const systemInstruction = `You are a helpful HR Assistant for a company called 'Thansandee' in Thailand. 
@@ -22,7 +13,7 @@ export const askHRPolicy = async (question: string): Promise<string> => {
     If asked about specific company data (like salaries of other employees), refuse politely in Thai.
     `;
 
-    const response = await genAI.models.generateContent({
+    const response = await ai.models.generateContent({
       model: model,
       contents: question,
       config: {

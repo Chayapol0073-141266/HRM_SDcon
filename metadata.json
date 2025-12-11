@@ -1,6 +1,6 @@
 {
-  "name": "HRM SDcon แก้ Css แล้ว",
-  "description": "ระบบ Dashboard HRM ทันสมัยในธีมสีส้มพาสเทล รองรับการลงเวลาผ่านพิกัด GPS, การอนุมัติการลา และรายงานสำหรับผู้บริหาร",
+  "name": "HRM SD_แก้ไข css v2",
+  "description": "ระบบ Dashboard HRM ",
   "requestFramePermissions": [
     "camera",
     "microphone",

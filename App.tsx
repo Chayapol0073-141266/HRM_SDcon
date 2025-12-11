@@ -12,7 +12,6 @@ import { WorkHistory } from './components/WorkHistory';
 import { MyAttendanceHistory } from './components/MyAttendanceHistory';
 import { User, Role } from './types';
 import { initDB, getUser, addLog } from './services/db';
-import { initializeGemini } from './services/geminiService';
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -23,10 +22,6 @@ const App: React.FC = () => {
 
   useEffect(() => {
     initDB();
-    // Initialize Gemini with environment key if available
-    if (process.env.API_KEY) {
-      initializeGemini(process.env.API_KEY);
-    }
   }, []);
 
   const handleLogin = (e: React.FormEvent) => {
