@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { User, LeaveRequest, LeaveStatus, Role } from '../types';
 import { LEAVE_TYPES, DEPARTMENTS } from '../constants';
-import { saveLeave, getLeaves, addLog } from '../services/db';
-import { PlusCircle, Clock, CheckCircle, XCircle, FileText, Calendar, ChevronRight, BarChart2 } from 'lucide-react';
+import { saveLeave, getLeaves, addLog, deleteLeave } from '../services/db';
+import { PlusCircle, Clock, CheckCircle, XCircle, FileText, Calendar, ChevronRight, Trash2 } from 'lucide-react';
 
 interface LeaveRequestProps {
   user: User;
@@ -10,7 +10,8 @@ interface LeaveRequestProps {
 
 export const LeaveRequestPanel: React.FC<LeaveRequestProps> = ({ user }) => {
   const [showForm, setShowForm] = useState(false);
-  const [history, setHistory] = useState<LeaveRequest[]>([]);
+  const [history, setHistory] = useState<LeaveRequest[]>([]
+);
   const [formData, setFormData] = useState({
     type: LEAVE_TYPES[0],
     startDate: '',
@@ -67,6 +68,14 @@ export const LeaveRequestPanel: React.FC<LeaveRequestProps> = ({ user }) => {
     setShowForm(false);
     setFormData({ type: LEAVE_TYPES[0], startDate: '', endDate: '', reason: '' });
     alert("ส่งคำขอลาเรียบร้อยแล้ว!");
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirm('คุณต้องการลบคำขอลาหยุดนี้ใช่หรือไม่?')) {
+      deleteLeave(id);
+      addLog(user.id, 'DELETE_LEAVE_REQUEST', `Deleted leave request ID: ${id}`);
+      loadHistory(); // Refresh the list
+    }
   };
 
   return (
@@ -191,6 +200,7 @@ export const LeaveRequestPanel: React.FC<LeaveRequestProps> = ({ user }) => {
                    <th className="p-4 font-semibold w-1/4">ช่วงเวลา</th>
                    <th className="p-4 font-semibold w-1/6">สถานะ</th>
                    <th className="p-4 font-semibold">ขั้นตอนการอนุมัติ (Approval Chain)</th>
+                   <th className="p-4 font-semibold text-right">จัดการ</th>
                  </tr>
                </thead>
                <tbody className="divide-y divide-orange-50">
@@ -272,6 +282,20 @@ export const LeaveRequestPanel: React.FC<LeaveRequestProps> = ({ user }) => {
                            );
                          })}
                        </div>
+                     </td>
+                     <td className="p-4 align-middle text-right">
+                        <button 
+                          onClick={() => handleDelete(req.id)}
+                          disabled={req.status !== LeaveStatus.PENDING}
+                          className={`p-2 rounded-lg transition ${
+                            req.status === LeaveStatus.PENDING 
+                              ? 'text-red-500 hover:bg-red-50' 
+                              : 'text-gray-300 cursor-not-allowed'
+                          }`}
+                          title={req.status === LeaveStatus.PENDING ? "ลบคำขอ" : "ไม่สามารถลบคำขอที่อนุมัติ/ปฏิเสธแล้วได้"}
+                        >
+                          <Trash2 size={18} />
+                        </button>
                      </td>
                    </tr>
                  ))}

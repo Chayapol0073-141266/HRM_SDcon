@@ -48,7 +48,7 @@ export const Layout: React.FC<LayoutProps> = ({ user, onLogout, activeTab, setAc
   );
 
   return (
-    <div className="min-h-screen bg-orange-50 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-white flex flex-col md:flex-row">
       {/* Sidebar (Desktop) */}
       <aside className="hidden md:flex flex-col w-64 bg-white border-r border-orange-200 h-screen sticky top-0 shadow-sm z-20">
         <div className="p-6 flex items-center justify-center border-b border-orange-100">
